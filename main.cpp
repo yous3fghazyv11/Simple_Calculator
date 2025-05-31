@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cmath>
+#include <format>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -85,7 +86,7 @@ Token Token_stream::get()
             return Token('8', val);
         }
         default:
-            throw std::runtime_error("Bad token");
+            throw std::runtime_error(color("Bad token", 'r'));
     }
 }
 
@@ -233,7 +234,7 @@ int main()
             Token  t   = ts.get();
             if (t.kind == ';')
             {
-                std::cout << "= " << color(std::to_string(val), 'g') << std::endl;
+                std::cout << color("= ", 'g') << color(std::format("{}", val), 'g') << std::endl;
             }
             else
             {
