@@ -3,14 +3,13 @@
 #include <stdexcept>
 
 double expression();
-double term();
-double primary();
+double term(); double primary();
 
 class Token
 {
 public:
-	char kind;					// what kind of token
-	double value;				// for numbers: a value
+	char kind;
+	double value;
 	Token(char ch)
 		: kind(ch), value(0)
 	{
@@ -24,8 +23,8 @@ public:
 class Token_stream
 {
 public:
-    Token get();				// get a Token
-    void putback(Token t);		// put a Token back
+    Token get();
+    void putback(Token t);
     Token_stream() : full{false}, buffer{0} {}
 private:
 	bool full = false;
@@ -50,7 +49,7 @@ Token Token_stream::get()
         return buffer;
     }
     char ch;
-    std::cin >> ch; // note that >> skips whitespace (space, newline, tab, etc.)
+    std::cin >> ch;
 	if (std::cin.eof())
 	{
 		std::cout << std::endl << "Exiting..." << std::endl;
@@ -67,7 +66,7 @@ Token Token_stream::get()
         case '-':
         case '*':
         case '/':
-            return Token(ch);	// let each character represent itself
+            return Token(ch);
         case '.':
         case '0':
         case '1':
@@ -80,10 +79,10 @@ Token Token_stream::get()
         case '8':
         case '9':
         {
-            std::cin.putback(ch); // put digit back into the input stream
+            std::cin.putback(ch);
             double val;
-            std::cin >> val;        // read a floating-point number
-            return Token('8', val); // let '8' represent "a number"
+            std::cin >> val;
+            return Token('8', val);
         }
         default:
             throw std::runtime_error("Bad token");

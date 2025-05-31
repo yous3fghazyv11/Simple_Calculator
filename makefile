@@ -11,3 +11,6 @@ $(TARGET): main.cpp
 
 run: all
 	./$(TARGET)
+
+clean: all
+	rm -rf $(TARGET)
