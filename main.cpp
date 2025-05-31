@@ -1,3 +1,24 @@
+// basic calculator app
+// author: yousef ghazy
+
+/*
+ * parsing grammar:
+ * Expression: 
+ *   Term + Term
+ *   Term - Term
+ *   Let var_name = Expression
+ * Term:
+ *   Power * Power
+ *   Power / Power
+ * power:
+ *   Primary ^ Primary
+ * Primary:
+ *   Number
+ *   Number!
+ *   (Expression)
+ *   (Expression)!
+ */
+
 #include <cassert>
 #include <cmath>
 #include <format>
@@ -94,6 +115,8 @@ Token_stream ts;
 
 double factorial(double num)
 {
+    if (num < 0 || std::floor(num) != num)
+        throw std::runtime_error(color("Factorial of negative/non-integer", 'r'));
     if (num == 1 || num == 0)
         return 1;
     return num * (factorial(num - 1));
