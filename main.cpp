@@ -1,42 +1,40 @@
 #include <cassert>
+#include <cmath>
 #include <iostream>
 #include <stdexcept>
+#include <string>
 
 double expression();
-double term(); double primary();
+double term();
+double primary();
+double power();
+std::string color(std::string text, char color);
 
 class Token
 {
-public:
-	char kind;
-	double value;
-	Token(char ch)
-		: kind(ch), value(0)
-	{
-	}
-	Token(char ch, double val)
-		: kind(ch), value(val)
-	{
-	}
+  public:
+    char   kind;
+    double value;
+    Token(char ch) : kind(ch), value(0) {}
+    Token(char ch, double val) : kind(ch), value(val) {}
 };
 
 class Token_stream
 {
-public:
+  public:
     Token get();
-    void putback(Token t);
+    void  putback(Token t);
     Token_stream() : full{false}, buffer{0} {}
-private:
-	bool full = false;
+
+  private:
+    bool  full = false;
     Token buffer;
 };
 
 void Token_stream::putback(Token t)
 {
     if (full)
-    {
-        throw std::runtime_error("error: putback() into a full buffer");
-    }
+        throw std::runtime_error(color("error: putback() into a full buffer", 'r'));
     buffer = t;
     full   = true;
 }
@@ -50,11 +48,11 @@ Token Token_stream::get()
     }
     char ch;
     std::cin >> ch;
-	if (std::cin.eof())
-	{
-		std::cout << std::endl << "Exiting..." << std::endl;
-		exit(0);
-	}
+    if (std::cin.eof())
+    {
+        std::cout << std::endl << "Exiting..." << std::endl;
+        exit(0);
+    }
 
     switch (ch)
     {
@@ -67,6 +65,7 @@ Token Token_stream::get()
         case '*':
         case '/':
         case '!':
+        case '^':
             return Token(ch);
         case '.':
         case '0':
@@ -94,8 +93,27 @@ Token_stream ts;
 
 double factorial(double num)
 {
-	if (num == 1 || num == 0) return 1;
-	return num * (factorial(num - 1));
+    if (num == 1 || num == 0)
+        return 1;
+    return num * (factorial(num - 1));
+}
+
+std::string color(std::string text, char color)
+{
+    std::string green = "\033[32m";
+    std::string red   = "\033[31m";
+    std::string white = "\033[0m";
+    switch (color)
+    {
+        case 'r':
+            return red + text + white;
+            break;
+        case 'g':
+            return green + text + white;
+            break;
+        default:
+            return "";
+    }
 }
 
 double expression()
@@ -123,21 +141,21 @@ double expression()
 
 double term()
 {
-    double left = primary();
+    double left = power();
     Token  next = ts.get();
     while (true)
     {
         switch (next.kind)
         {
             case '*':
-                left *= primary();
+                left *= power();
                 next = ts.get();
                 break;
             case '/':
             {
-                double d = primary();
+                double d = power();
                 if (d == 0)
-                    throw std::runtime_error("error: devision by zero");
+                    throw std::runtime_error(color("error: devision by zero", 'r'));
                 left /= d;
                 next = ts.get();
                 break;
@@ -145,6 +163,25 @@ double term()
             default:
                 ts.putback(next);
                 return left;
+        }
+    }
+}
+
+double power()
+{
+    double left = primary();
+    Token  next = ts.get();
+    while (true)
+    {
+        if (next.kind == '^')
+        {
+            return std::pow(left, primary());
+            next = ts.get();
+        }
+        else
+        {
+            ts.putback(next);
+            return left;
         }
     }
 }
@@ -159,29 +196,29 @@ double primary()
             double d = expression();
             next     = ts.get();
             if (next.kind != ')')
-                throw std::runtime_error("error: ')' expected");
+                throw std::runtime_error(color("error: ')' expected", 'r'));
             return d;
             break;
         }
         case '8':
-		{
-			Token is_fac = ts.get();
-			if (is_fac.kind == '!')
-			{
-				return factorial(next.value);
-			}
-			else
-			{
+        {
+            Token is_fac = ts.get();
+            if (is_fac.kind == '!')
+            {
+                return factorial(next.value);
+            }
+            else
+            {
                 ts.putback(is_fac);
             }
             return next.value;
             break;
-		}
-		case 'q':
-			std::cout << "Exiting...\n";
-			exit(0);
+        }
+        case 'q':
+            std::cout << "Exiting...\n";
+            exit(0);
         default:
-            throw std::runtime_error("error: primary expected");
+            throw std::runtime_error(color("error: primary expected", 'r'));
             break;
     }
 }
@@ -196,7 +233,7 @@ int main()
             Token  t   = ts.get();
             if (t.kind == ';')
             {
-                std::cout << "= " << val << std::endl;
+                std::cout << "= " << color(std::to_string(val), 'g') << std::endl;
             }
             else
             {
