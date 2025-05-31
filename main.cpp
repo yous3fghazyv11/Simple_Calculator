@@ -66,6 +66,7 @@ Token Token_stream::get()
         case '-':
         case '*':
         case '/':
+        case '!':
             return Token(ch);
         case '.':
         case '0':
@@ -90,6 +91,12 @@ Token Token_stream::get()
 }
 
 Token_stream ts;
+
+double factorial(double num)
+{
+	if (num == 1 || num == 0) return 1;
+	return num * (factorial(num - 1));
+}
 
 double expression()
 {
@@ -157,8 +164,19 @@ double primary()
             break;
         }
         case '8':
+		{
+			Token is_fac = ts.get();
+			if (is_fac.kind == '!')
+			{
+				return factorial(next.value);
+			}
+			else
+			{
+                ts.putback(is_fac);
+            }
             return next.value;
             break;
+		}
 		case 'q':
 			std::cout << "Exiting...\n";
 			exit(0);
@@ -170,7 +188,6 @@ double primary()
 
 int main()
 {
-    std::cout << "Welcome to my calculator app" << std::endl;
     while (std::cout << "> ")
     {
         try
