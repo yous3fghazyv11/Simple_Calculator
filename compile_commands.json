@@ -1,0 +1,19 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-Wall",
+      "-g",
+      "-W",
+      "-pedantic",
+      "-std=c++23",
+      "-o",
+      "main",
+      "main.cpp"
+    ],
+    "directory": "/home/yousef/Simple_Calculator",
+    "file": "/home/yousef/Simple_Calculator/main.cpp",
+    "output": "/home/yousef/Simple_Calculator/main"
+  }
+]
